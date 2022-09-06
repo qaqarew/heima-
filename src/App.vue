@@ -1,5 +1,5 @@
 <template>
-  <div>黑马头条</div>
+  <div>黑马头条  6666</div>
 </template>
 
 <script>
