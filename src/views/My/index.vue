@@ -107,7 +107,7 @@ export default {
   data(){
     return{
       mobileSrc,
-      //b8-1 运行userInfo
+      //b8-1 运行userInfo `
       userInfo:{}
     }
   },
