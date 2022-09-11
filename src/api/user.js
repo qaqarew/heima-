@@ -1,4 +1,5 @@
 import request from "@/utils/request";
+// import store  from "@/store";
 
 /**
  *
@@ -26,3 +27,17 @@ export const sendCodeAPI = (mobile) => {
     url: `/v1_0/sms/codes/${mobile}`,
   });
 };
+/**
+ * 获取用户信息
+ * @returns  Promise
+ */
+//b7-获取用户信息，this.$store用不了需要重新引入store,
+export const getUserInfoAPI= ()=>{
+  return request({
+    url: '/v1_0/user',
+    // headers :{
+    //   //Authorization接口名称
+    //   Authorization:`Bearer ${store.state.tokenObj.token}`
+    // }
+  })
+}
