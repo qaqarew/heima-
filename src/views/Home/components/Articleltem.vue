@@ -1,8 +1,7 @@
 <template>
   <div>
-
 <!-- 没有图片新闻 -->
-<!-- c-6-3-引入时判断图片 -->
+<!-- c-6-3-引入时判断图片   ||c-6-5- 插入对应数据 :title="article.title，:label="label" -->
 <van-cell v-if="article.cover.type ===0" :title="article.title"
 :label="label"></van-cell>
 <!-- 一张图片 -->
@@ -26,6 +25,8 @@
 </template>
 
 <script>
+//  c10-在utils创建dayjs，引入时间组件
+import dayjs from '@/utils/dayjs'
 export default {
     // c-6-2-子父传值
 props:{
@@ -34,11 +35,12 @@ props:{
         default:()=>({})
     }
 },
+// c-6-4-
 computed:{
    
     label (){
         const {aut_name ,comm_count ,pubdate} =this.article
-        return `${aut_name}${comm_count}评论${pubdate}`
+        return `${aut_name}${comm_count}评论${dayjs(pubdate).fromNow()}`
     }
 }
 

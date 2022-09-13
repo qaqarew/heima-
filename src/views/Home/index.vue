@@ -17,8 +17,18 @@
   </van-tab>
 
   <!-- c2-3-引入图标 -->
-  <span class="toutiao toutiao-gengduo"></span>
+  <span class="toutiao toutiao-gengduo" @click="isShow=true "></span>
 </van-tabs>
+
+<!-- c11-弹出层,引入popup组件 设置高度百分百 c11-2-引入closeable-->
+<van-popup v-model="isShow" closeable close-icon-position="top-left"
+ position="bottom" :style="{height:'100%'}">
+ <!-- c12-4-父子传值，把数据传给ChannelEdit -->
+ <!-- c14-2  @change-active="[(isShow=false),(active =$event)]父子传值-->
+ <channel-edit 
+ @change-active="[(isShow=false),(active =$event)]"
+ :my-channels="channels"></channel-edit>
+ </van-popup>
   </div>
 </template>
 
@@ -27,17 +37,23 @@
 import {getChannelAPI} from "@/api"
 // c5-先去一个compon文件夹，创建文章详情的组件，然后引入
 import ArticleList from './components/ArticleList.vue'
+//c11-3-引入组件
+import ChannelEdit from './components/ChannelEdit.vue'
+
 export default {
   components:{
     // c5-1
-    ArticleList
+    ArticleList,
+    ChannelEdit
   },
 data() {
     return {
       // c2-1-active:高亮的tab索引
       active: 0,
       // c4-4-创建一个空数组获取数据
-      channels:[]
+      channels:[],
+  // c11-1-
+      isShow:false,
     };
   },
   created(){
