@@ -10,18 +10,21 @@ Vue.use(Vuex);
 //4.配置项
 //key：默认值是vuex
 //reducer:函数，指定持久化那些数据return一个对象，对象就作为存储的value
-// storage：存储的方式，默认值是本地存储
+// storage：存储的方式，默认值是本地存储1
 export default new Vuex.Store({
   plugins: [
     createPersistedState({
       key: "HEIMA_TOUTIAO",
-      reducer({ tokenObj }) {
-        return { tokenObj };
+      // c15-3-2-把myChannels传入
+      reducer({ tokenObj,myChannels }) {
+        return { tokenObj ,myChannels};
       },
     }),
   ],
   state: {
     tokenObj: {},
+    // c15-3-创建一个空数组
+    myChannels:[]
   },
   getters: {
     isLogin(state){
@@ -34,5 +37,13 @@ export default new Vuex.Store({
       //将toke存在vuex
       state.tokenObj = token;
     },
+    /**
+     * 
+     * @param {Array} channels 删除或者
+     */
+    // c15-3-1创建SET_MY_CHANNELS
+    SET_MY_CHANNELS(state,channels){
+      state.myChannels=channels
+    }
   },
 });

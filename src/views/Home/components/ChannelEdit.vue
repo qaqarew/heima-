@@ -31,13 +31,17 @@
     <!-- 标题 -->
     <van-cell title="推荐频道"></van-cell>
     <!-- c12-3-引入九宫格布局频道，设置样式 -->
+    <!--c14-4-2- @click="$emit('add-channel',item)" 点击将item传给父组件 -->
     <div  class="recommend-pannel">
    <van-grid gutter="10" :border="false">
   <van-grid-item 
   v-for="item in recommendChannels" 
   :key="item.id" 
   icon="plus" 
-  :text="item.name"/>
+  :text="item.name"
+  @click="$emit('add-channel',item)"
+  />
+  
 
  
  
@@ -72,9 +76,10 @@ methods:{
       this.allChannels =data.data.channels
     },
     // c14-编辑的时候点击删除，完成的时候点击跳转，先在上面绑定点击事件
-    handleMyChannel({name},index){
+    handleMyChannel({name,id},index){
+      // 14-3-2-传入id，把id传给父组件
         if(this.isEdit &&name !=='推荐'){
-            console.log('删除频道',name);
+            this.$emit('del-channel',id)
         }else{
             // c14-1-获取父亲传过来的值绑定，v-for上面绑定index定义
             this.$emit('change-active',index)

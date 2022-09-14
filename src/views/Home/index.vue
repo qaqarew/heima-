@@ -25,20 +25,35 @@
  position="bottom" :style="{height:'100%'}">
  <!-- c12-4-父子传值，把数据传给ChannelEdit -->
  <!-- c14-2  @change-active="[(isShow=false),(active =$event)]父子传值-->
+ <!-- c14-3-@del-channel ="delChannel" 绑定点击事件，删除功能 -->
+ <!-- c14-4-@add-channel="addChannel" 绑定点击事件，添加功能 -->
+ <!-- c17-最后添加 v-if="isShow" -->
  <channel-edit 
+ v-if="isShow"
  @change-active="[(isShow=false),(active =$event)]"
- :my-channels="channels"></channel-edit>
+ :my-channels="channels"
+ @del-channel ="delChannel"
+ @add-channel="addChannel"
+ ></channel-edit>
  </van-popup>
   </div>
 </template>
 
 <script>
-// c4-2-引入接口文档
+// c4-2-引入所有频道接口文档
 import {getChannelAPI} from "@/api"
 // c5-先去一个compon文件夹，创建文章详情的组件，然后引入
 import ArticleList from './components/ArticleList.vue'
 //c11-3-引入组件
 import ChannelEdit from './components/ChannelEdit.vue'
+// c14-3-2-引入删除接口api
+import {delChannelAPI} from '@/api'
+// c14-4-2
+import {addChannelAPI} from '@/api'
+// c15-引入mapGetters判断用户是否登入
+import {mapGetters,mapMutations} from 'vuex'
+// c15-4-引入mapMutations 方法
+
 
 export default {
   components:{
@@ -46,6 +61,11 @@ export default {
     ArticleList,
     ChannelEdit
   },
+  // c15-1-创建component
+  computed:{
+    ...mapGetters(['isLogin'])
+  },
+  
 data() {
     return {
       // c2-1-active:高亮的tab索引
@@ -58,12 +78,31 @@ data() {
   },
   created(){
     // c4-3-1运行getChannel（）
-this.getChannel()
+      // this.getChannel()
+      this.initChannels()
   },
 
   //1.?? ==>相当于&&，常用于语句
   //2.?. ==> 可选链操作符，？前面是undifined，那么不会往后取值
   methods:{
+    // C15-4-1-解构获取到的mapMutations
+     ...mapMutations(['SET_MY_CHANNELS']),
+// c16-判断是否登入
+     initChannels(){
+      // c16-1-如果登入了，channels发起请求获取自己的用户频道
+      if(this.isLogin){
+        this.getChannel()
+      }else{
+        // c16-2未登入，1：频道本地存储有没有数据，有直接运行本地存储，没有就发送请求获取默认数据
+        //c16-2- 创建一个本地数据myChannels，然后判断他的长度
+        const myChannels= this.$store.state.myChannels
+        if(myChannels.length===0){
+          this.getChannel()
+        }else{
+          this.channels = myChannels
+        }
+      }
+     },
     // c4-3-解构获取到的数据
     async getChannel(){
     try {
@@ -78,6 +117,58 @@ this.getChannel()
         status === 507&&this.fail('服务端异常，请刷新')
       }
     }
+    },
+    // c14-3-1-用filter来实现点击删除事件，从子组件传id过来
+    async delChannel(id){
+     
+      try {
+        // c15-4-2-创建newChannels，删除频道
+        const newChannels =this.channels.filter((item)=>item.id !==id)
+        // c15-2-判断用户是否登入，未登入就存储在本地
+       if(this.isLogin){
+         // 1.发送请求删除频道,引入删除api接口
+         await delChannelAPI(id)
+       }else{
+        // c15-4-3-把我的频道存储在本地
+          this.SET_MY_CHANNELS(newChannels)
+       }
+         // 2.视图层删除频道
+      // this.channels =this.channels.filter((item)=>item.id !==id)
+      this.channels = newChannels
+        this.$toast.success('删除频道成功')
+      } catch (error) {
+        if(error.response && error.response.status ===401){
+          this.$toast.fail('请登入再删除')
+        }else{
+          throw error
+        }
+      }
+    },
+    // c14-4-1-点击添加到我的频道
+    async addChannel(channel){
+      
+     try {
+        // c15-2-判断用户是否登入，未登入就存储在本地
+     if(this.isLogin){
+        // 1.发送请求添加频道
+       await addChannelAPI(channel.id, this.channels.length)
+     }else{
+// c15-4-4-把我的频道存储在本地
+this.SET_MY_CHANNELS([...this.channels,channel])
+     }
+      // 2.视图层添加频道
+      this.channels.push(channel)
+
+      this.$toast.success('添加频道成功')
+     } catch (error) {
+       if(error.response && error.response.status ===401){
+          this.$toast.fail('请登入再删除')
+        }else{
+          throw error
+        }
+     }
+      
+
     }
   }
 }
