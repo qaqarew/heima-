@@ -15,16 +15,18 @@ export default new Vuex.Store({
   plugins: [
     createPersistedState({
       key: "HEIMA_TOUTIAO",
-      // c15-3-2-把myChannels传入
-      reducer({ tokenObj,myChannels }) {
-        return { tokenObj ,myChannels};
+      // c15-3-2-把myChannels传入||d6-1-1传入histories
+      reducer({ tokenObj,myChannels,histories }) {
+        return { tokenObj ,myChannels,histories};
       },
     }),
   ],
   state: {
     tokenObj: {},
     // c15-3-创建一个空数组
-    myChannels:[]
+    myChannels:[],
+//d6-1-创建histories
+    histories:[]
   },
   getters: {
     isLogin(state){
@@ -44,6 +46,15 @@ export default new Vuex.Store({
     // c15-3-1创建SET_MY_CHANNELS
     SET_MY_CHANNELS(state,channels){
       state.myChannels=channels
+    },
+
+    /**
+     * d6-1-2创建SET_HISTORIES，
+     * @param {*} histories 删除或者添加以后的新的搜索历史
+     */
+
+    SET_HISTORIES(state,histories){
+      state.histories=histories
     }
   },
 });

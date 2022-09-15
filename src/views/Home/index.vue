@@ -3,8 +3,10 @@
     <!-- c1-头部搜索框 -->
     <van-nav-bar class="navbar">
       <template #title>
-
-      <van-button icon="search" size="small" round block>搜索</van-button>
+<!-- d2-绑定点击事件，跳转到search页面 -->
+      <van-button icon="search" size="small" round block
+      @click="$router.push('/search')"
+      >搜索</van-button>
       </template>
     </van-nav-bar>
 
